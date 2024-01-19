@@ -1,4 +1,4 @@
-# **Discourse AI** Plugin
+# **Discourse AI** Plugin LaPoste
 
 **Plugin Summary**
 

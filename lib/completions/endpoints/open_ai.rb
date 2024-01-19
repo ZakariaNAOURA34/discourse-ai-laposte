@@ -16,6 +16,7 @@ module DiscourseAi
         end
 
         def normalize_model_params(model_params)
+          Rails.logger.warn("Normalisation des paramètres du modèle : #{model_params.inspect}")
           model_params = model_params.dup
 
           # max_tokens, temperature are already supported
@@ -23,10 +24,12 @@ module DiscourseAi
             model_params[:stop] = model_params.delete(:stop_sequences)
           end
 
+          Rails.logger.warn("Paramètres du modèle après normalisation : #{model_params.inspect}")
           model_params
         end
 
         def default_options
+          Rails.logger.warn("Options par défaut pour le modèle : #{model}")
           { model: model == "gpt-4-turbo" ? "gpt-4-1106-preview" : model }
         end
 
@@ -37,6 +40,7 @@ module DiscourseAi
         private
 
         def model_uri
+          Rails.logger.warn("Détermination de l'URI du modèle pour : #{model}")
           url =
             if model.include?("gpt-4")
               if model.include?("32k")
@@ -56,10 +60,15 @@ module DiscourseAi
               end
             end
 
+          Rails.logger.warn(
+            "url: #{url}",
+          )
+
           URI(url)
         end
 
         def prepare_payload(prompt, model_params, dialect)
+          Rails.logger.warn("Préparation du payload avec prompt: #{prompt}, model_params: #{model_params}, dialect: #{dialect}")
           default_options
             .merge(model_params)
             .merge(messages: prompt)
@@ -70,6 +79,7 @@ module DiscourseAi
         end
 
         def prepare_request(payload)
+          Rails.logger.warn("Préparation de la requête avec payload : #{payload}")
           headers =
             { "Content-Type" => "application/json" }.tap do |h|
               if model_uri.host.include?("azure")
@@ -83,6 +93,11 @@ module DiscourseAi
               end
             end
 
+          Rails.logger.warn(
+            "headers: #{headers.inspect}",
+          )
+
+          Rails.logger.warn("En-têtes de la requête : #{headers.inspect}")
           Net::HTTP::Post.new(model_uri, headers).tap { |r| r.body = payload }
         end
 
@@ -100,6 +115,7 @@ module DiscourseAi
         end
 
         def partials_from(decoded_chunk)
+          Rails.logger.warn("Extraction des parties à partir de decoded_chunk : #{decoded_chunk}")
           decoded_chunk
             .split("\n")
             .map do |line|
