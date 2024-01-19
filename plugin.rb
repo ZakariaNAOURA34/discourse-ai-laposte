@@ -26,7 +26,7 @@ register_asset "stylesheets/modules/sentiment/desktop/dashboard.scss", :desktop
 register_asset "stylesheets/modules/sentiment/mobile/dashboard.scss", :mobile
 
 module ::DiscourseAi
-  PLUGIN_NAME = "discourse-ai"
+  PLUGIN_NAME = "discourse-ai-laposte"
 end
 
 Rails.autoloaders.main.push_dir(File.join(__dir__, "lib"), namespace: ::DiscourseAi)
@@ -38,7 +38,7 @@ after_initialize do
   require_relative "discourse_automation/llm_triage"
   require_relative "discourse_automation/llm_report"
 
-  add_admin_route "discourse_ai.title", "discourse-ai"
+  add_admin_route "discourse_ai.title", "discourse-ai-laposte"
 
   [
     DiscourseAi::Embeddings::EntryPoint.new,
